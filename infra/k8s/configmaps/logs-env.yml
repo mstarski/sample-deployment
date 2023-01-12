@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  APP_MODE: production
+  APP_NAME: logs
+  APP_PORT: "3001"
+  POSTGRES_URL: postgresql://postgres:password@postgres-srv:5432/postgres
+  REDIS_HOST: redis-srv
+  REDIS_PORT: "6379"
+  REDIS_SUB_CHANNEL_NAME: TRIVIA
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: logs-env

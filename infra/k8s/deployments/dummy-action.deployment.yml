@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: dummy-action
+
+spec:
+  template:
+    metadata:
+      name: dummy-action
+      labels:
+        app: dummy-action
+    spec:
+      containers:
+        - name: dummy-action
+          image: mstarski/dummy-action
+          envFrom:
+            - configMapRef:
+                name: dummy-action-env
+
+            
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dummy-action

@@ -1,0 +1,69 @@
+version: "3.9"
+services:
+  dummy-action:
+    build:
+      context: ../
+      dockerfile: ./apps/dummy-action/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+
+  logs:
+    build:
+      context: ../
+      dockerfile: ./apps/logs/Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - redis
+      - postgres
+
+  logs-ui:
+    build:
+      context: ../
+      dockerfile: ./apps/logs-ui/Dockerfile
+    ports:
+      - "3002:3000"
+    depends_on:
+      - logs
+    environment:
+      NUXT_PUBLIC_APP_NAME: logs-ui
+      NUXT_PUBLIC_APP_MODE: development
+      NUXT_LOGS_API_URL: http://logs:3001
+
+  ui:
+    build:
+      context: ../apps/ui
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - dummy-action
+    volumes:
+      - ../apps/ui/nginx/templates:/etc/nginx/templates
+    environment:
+      DUMMY_ACTION_API_URL: http://dummy-action:3000
+
+  redis:
+    image: redis:7.0.7-alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15.1-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pg@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - "9999:80"
+    depends_on:
+      - postgres

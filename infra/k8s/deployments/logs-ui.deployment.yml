@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logs-ui
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: logs-ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: logs-ui
+    spec:
+      containers:
+        - image: mstarski/logs-ui
+          name: logs-ui
+          envFrom:
+            - configMapRef:
+                name: logs-ui-env
